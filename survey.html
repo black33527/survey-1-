@@ -13,9 +13,9 @@
         textarea { width: 100%; height: 100px; }
         select { width: 200px; }
     </style>
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+    <!-- Firebase 兼容版本 SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
     <div class="intro">
@@ -417,6 +417,14 @@
     </form>
 
     <script>
+        // 检查 Firebase 是否加载
+        if (typeof firebase === 'undefined') {
+            console.error("Firebase SDK 未加载，请检查网络或 SDK 链接");
+            alert("Firebase SDK 加载失败，请检查网络后刷新页面。");
+        } else {
+            console.log("Firebase SDK 加载成功");
+        }
+
         // 初始化 Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyCHjTlysXHf_8P6E0qH8tl2AWNiarJJsEk",
@@ -428,40 +436,46 @@
             measurementId: "G-FHQ61LMLPF"
         };
 
+        let db;
         try {
             firebase.initializeApp(firebaseConfig);
-            const db = firebase.firestore();
+            db = firebase.firestore();
             console.log("Firebase 初始化成功");
-
-            function submitForm(event) {
-                event.preventDefault();
-                const form = document.getElementById('surveyForm');
-                const formData = new FormData(form);
-                let data = {};
-
-                for (let i = 1; i <= 40; i++) {
-                    if (i !== 35 && i !== 38) {
-                        data[`q${i}`] = formData.get(`q${i}`);
-                    }
-                }
-                data['q35'] = formData.getAll('q35');
-                data['q38'] = formData.getAll('q38');
-
-                console.log("提交的数据:", data);
-
-                db.collection('responses').add(data)
-                    .then(() => {
-                        alert('提交成功！感谢您的参与！');
-                        form.reset(); // 清空表单
-                    })
-                    .catch(error => {
-                        alert('提交失败，请稍后再试。');
-                        console.error("提交错误:", error);
-                    });
-            }
         } catch (error) {
             console.error("Firebase 初始化失败:", error);
-            alert("初始化失败，请刷新页面重试。");
+            alert("Firebase 初始化失败: " + error.message);
+        }
+
+        function submitForm(event) {
+            event.preventDefault();
+            const form = document.getElementById('surveyForm');
+            const formData = new FormData(form);
+            let data = {};
+
+            for (let i = 1; i <= 40; i++) {
+                if (i !== 35 && i !== 38) {
+                    data[`q${i}`] = formData.get(`q${i}`);
+                }
+            }
+            data['q35'] = formData.getAll('q35');
+            data['q38'] = formData.getAll('q38');
+
+            console.log("提交的数据:", data);
+
+            if (!db) {
+                alert('数据库未初始化，请刷新页面重试。');
+                return;
+            }
+
+            db.collection('responses').add(data)
+                .then(() => {
+                    alert('提交成功！感谢您的参与！');
+                    form.reset();
+                })
+                .catch(error => {
+                    alert('提交失败，请稍后再试。');
+                    console.error("提交错误:", error);
+                });
         }
     </script>
 </body>
