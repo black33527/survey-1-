@@ -13,9 +13,9 @@
         textarea { width: 100%; height: 100px; }
         select { width: 200px; }
     </style>
-    <!-- Firebase 兼容版本 SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <!-- 使用国内 CDN 加载 Firebase SDK -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
 </head>
 <body>
     <div class="intro">
@@ -420,7 +420,9 @@
         // 检查 Firebase 是否加载
         if (typeof firebase === 'undefined') {
             console.error("Firebase SDK 未加载，请检查网络或 SDK 链接");
-            alert("Firebase SDK 加载失败，请检查网络后刷新页面。");
+            alert("Firebase SDK 加载失败，可能是网络限制导致。请尝试使用 VPN 或联系管理员。");
+            // 禁用提交按钮
+            document.querySelector('.submit-btn').disabled = true;
         } else {
             console.log("Firebase SDK 加载成功");
         }
@@ -443,7 +445,8 @@
             console.log("Firebase 初始化成功");
         } catch (error) {
             console.error("Firebase 初始化失败:", error);
-            alert("Firebase 初始化失败: " + error.message);
+            alert("Firebase 初始化失败: " + error.message + "\n可能是网络限制导致，请尝试使用 VPN 或联系管理员。");
+            document.querySelector('.submit-btn').disabled = true;
         }
 
         function submitForm(event) {
@@ -463,7 +466,7 @@
             console.log("提交的数据:", data);
 
             if (!db) {
-                alert('数据库未初始化，请刷新页面重试。');
+                alert('数据库未初始化，可能是网络限制导致。请尝试使用 VPN 或联系管理员。');
                 return;
             }
 
@@ -473,7 +476,7 @@
                     form.reset();
                 })
                 .catch(error => {
-                    alert('提交失败，请稍后再试。');
+                    alert('提交失败，可能是网络限制导致。请尝试使用 VPN 或联系管理员。');
                     console.error("提交错误:", error);
                 });
         }
