@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>问卷数据分析</title>
+    <style>
+        body { font-family: "Microsoft YaHei", sans-serif; margin: 20px; }
+        h2 { color: #333; }
+        .result { margin: 10px 0; }
+        canvas { max-width: 400px; margin: 20px 0; }
+    </style>
+    <!-- Firebase 兼容版本 SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h2>问卷数据分析</h2>
+    <button onclick="analyzeData()">分析数据</button>
+    <div id="results">
+        <canvas id="genderChart"></canvas>
+        <canvas id="ageChart"></canvas>
+        <canvas id="roleChart"></canvas>
+        <canvas id="incomeChart"></canvas>
+        <canvas id="workHoursChart"></canvas>
+    </div>
+
+    <script>
+        // 初始化 Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCHjTlysXHf_8P6E0qH8tl2AWNiarJJsEk",
+            authDomain: "survey-c6c22.firebaseapp.com",
+            projectId: "survey-c6c22",
+            storageBucket: "survey-c6c22.firebasestorage.app",
+            messagingSenderId: "988197854546",
+            appId: "1:988197854546:web:2bd6fc3b7d186ed4a66e8b",
+            measurementId: "G-FHQ61LMLPF"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        async function analyzeData() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = "正在分析...";
+
+            try {
+                // 获取所有问卷数据
+                const snapshot = await db.collection('responses').get();
+                const totalResponses = snapshot.size;
+                if (totalResponses === 0) {
+                    resultsDiv.innerHTML = "<p>暂无数据，请先提交问卷。</p>";
+                    return;
+                }
+
+                // 统计 Q1（性别）占比
+                const genderCount = { "男": 0, "女": 0 };
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const gender = data.q1;
+                    if (gender) genderCount[gender]++;
+                });
+
+                // 统计 Q2（年龄）分布
+                const ageCount = {
+                    "18-23": 0,
+                    "24-35": 0,
+                    "36-47": 0,
+                    "48-59": 0,
+                    "60以上": 0
+                };
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const age = data.q2;
+                    if (age) ageCount[age]++;
+                });
+
+                // 统计 Q4（岗位）分布
+                const roleCount = {
+                    "原画设计": 0,
+                    "3D建模/渲染": 0,
+                    "动画制作": 0,
+                    "后期剪辑/特效": 0,
+                    "编剧/导演": 0,
+                    "其他": 0
+                };
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const role = data.q4;
+                    if (role) roleCount[role]++;
+                });
+
+                // 统计 Q9（月收入范围）
+                const incomeCount = {
+                    "低于最低工资": 0,
+                    "最低至平均": 0,
+                    "平均至三倍": 0,
+                    "高于三倍": 0
+                };
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const income = data.q9;
+                    if (income) incomeCount[income]++;
+                });
+
+                // 统计 Q11（工作时长）
+                const workHoursCount = {
+                    "40小时以下": 0,
+                    "40-55小时": 0,
+                    "55小时以上": 0
+                };
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const workHours = data.q11;
+                    if (workHours) workHoursCount[workHours]++;
+                });
+
+                // 显示图表
+                resultsDiv.innerHTML = `<p>总提交人数: ${totalResponses}</p>`;
+
+                // 性别占比饼图
+                const genderCtx = document.getElementById('genderChart').getContext('2d');
+                new Chart(genderCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: Object.keys(genderCount),
+                        datasets: [{
+                            data: Object.values(genderCount),
+                            backgroundColor: ['#FF6384', '#36A2EB']
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            title: { display: true, text: 'Q1 性别占比' }
+                        }
+                    }
+                });
+
+                // 年龄分布柱状图
+                const ageCtx = document.getElementById('ageChart').getContext('2d');
+                new Chart(ageCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(ageCount),
+                        datasets: [{
+                            label: '人数',
+                            data: Object.values(ageCount),
+                            backgroundColor: '#36A2EB'
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            title: { display: true, text: 'Q2 年龄分布' }
+                        },
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                });
+
+                // 岗位分布柱状图
+                const roleCtx = document.getElementById('roleChart').getContext('2d');
+                new Chart(roleCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(roleCount),
+                        datasets: [{
+                            label: '人数',
+                            data: Object.values(roleCount),
+                            backgroundColor: '#FFCE56'
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            title: { display: true, text: 'Q4 岗位分布' }
+                        },
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                });
+
+                // 收入范围柱状图
+                const incomeCtx = document.getElementById('incomeChart').getContext('2d');
+                new Chart(incomeCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(incomeCount),
+                        datasets: [{
+                            label: '人数',
+                            data: Object.values(incomeCount),
+                            backgroundColor: '#4BC0C0'
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            title: { display: true, text: 'Q9 月收入范围' }
+                        },
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                });
+
+                // 工作时长柱状图
+                const workHoursCtx = document.getElementById('workHoursChart').getContext('2d');
+                new Chart(workHoursCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(workHoursCount),
+                        datasets: [{
+                            label: '人数',
+                            data: Object.values(workHoursCount),
+                            backgroundColor: '#9966FF'
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            title: { display: true, text: 'Q11 工作时长' }
+                        },
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error("分析错误:", error);
+                resultsDiv.innerHTML = `<p>分析失败: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
