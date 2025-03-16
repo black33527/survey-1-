@@ -13,11 +13,14 @@
         textarea { width: 100%; height: 100px; }
         select { width: 200px; }
     </style>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 </head>
 <body>
     <div class="intro">
         <h2>中国动画行业从业人员工作生活现状调研</h2>
-        <p>尊敬的中国动画行业从业人员，您好！我们希望通过本次调研，了解中国动画电影登顶全球动画电影票房榜后，对于中国动画行业的发展及其从业人员的工作和生活带来了哪些具体影响。调研结果将用于行业分析、社会研究和建言献策，所有数据匿名处理，感谢您的参与！预计填写时间：10-15分钟</p>
+        <p>尊敬的中国动画行业从业人员，您好！我们希望通过本次调研，了解中国动画行业从业人员的工作和生活现状。所有数据匿名处理，预计填写时间：10-15分钟</p>
     </div>
 
     <form id="surveyForm" onsubmit="submitForm(event)">
@@ -69,7 +72,6 @@
                 <option value="广东省-广州市">广东省-广州市</option>
                 <option value="四川省-成都市">四川省-成都市</option>
                 <option value="浙江省-杭州市">浙江省-杭州市</option>
-                <!-- 可根据需要添加更多省市 -->
             </select>
         </div>
 
@@ -415,31 +417,41 @@
     </form>
 
     <script>
+        // 初始化 Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCHjTlysXHf_8P6E0qH8tl2AWNiarJJsEk",
+            authDomain: "survey-c6c22.firebaseapp.com",
+            projectId: "survey-c6c22",
+            storageBucket: "survey-c6c22.firebasestorage.app",
+            messagingSenderId: "988197854546",
+            appId: "1:988197854546:web:2bd6fc3b7d186ed4a66e8b",
+            measurementId: "G-FHQ61LMLPF"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
         function submitForm(event) {
             event.preventDefault();
             const form = document.getElementById('surveyForm');
             const formData = new FormData(form);
             let data = {};
 
-            // 处理单选题
             for (let i = 1; i <= 40; i++) {
-                if (i !== 35 && i !== 38) { // 跳过多选题
+                if (i !== 35 && i !== 38) {
                     data[`q${i}`] = formData.get(`q${i}`);
                 }
             }
-
-            // 处理多选题 Q35 和 Q38
             data['q35'] = formData.getAll('q35');
             data['q38'] = formData.getAll('q38');
 
-            const jsonData = JSON.stringify(data, null, 2);
-            const blob = new Blob([jsonData], { type: 'application/json' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'survey_response.json';
-            link.click();
-
-            alert('提交成功！请将下载的文件发送给我们，感谢您的参与！');
+            db.collection('responses').add(data)
+                .then(() => {
+                    alert('提交成功！感谢您的参与！');
+                })
+                .catch(error => {
+                    alert('提交失败，请稍后再试。');
+                    console.error(error);
+                });
         }
     </script>
 </body>
