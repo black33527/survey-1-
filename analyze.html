@@ -10,11 +10,10 @@
         .result { margin: 10px 0; }
         canvas { max-width: 400px; margin: 20px 0; }
     </style>
-    <!-- Firebase 兼容版本 SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- 使用国内 CDN 加载 Firebase 和 Chart.js -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/Chart.js/4.4.2/chart.min.js"></script>
 </head>
 <body>
     <h2>问卷数据分析</h2>
@@ -29,6 +28,23 @@
     </div>
 
     <script>
+        // 检查 Firebase 和 Chart.js 是否加载
+        if (typeof firebase === 'undefined') {
+            console.error("Firebase SDK 未加载，请检查网络或 SDK 链接");
+            document.getElementById('results').innerHTML = "<p>错误：Firebase SDK 加载失败，可能是网络限制导致。请尝试使用 VPN 或联系管理员。</p>";
+            document.querySelector('button').disabled = true;
+        } else {
+            console.log("Firebase SDK 加载成功");
+        }
+
+        if (typeof Chart === 'undefined') {
+            console.error("Chart.js 未加载，请检查网络或 CDN 链接");
+            document.getElementById('results').innerHTML = "<p>错误：Chart.js 加载失败，可能是网络限制导致。请尝试使用 VPN 或联系管理员。</p>";
+            document.querySelector('button').disabled = true;
+        } else {
+            console.log("Chart.js 加载成功");
+        }
+
         // 初始化 Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyCHjTlysXHf_8P6E0qH8tl2AWNiarJJsEk",
@@ -40,12 +56,25 @@
             measurementId: "G-FHQ61LMLPF"
         };
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        let db;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+            console.log("Firebase 初始化成功");
+        } catch (error) {
+            console.error("Firebase 初始化失败:", error);
+            document.getElementById('results').innerHTML = `<p>Firebase 初始化失败: ${error.message}<br>可能是网络限制导致，请尝试使用 VPN 或联系管理员。</p>`;
+            document.querySelector('button').disabled = true;
+        }
 
         async function analyzeData() {
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = "正在分析...";
+
+            if (!db) {
+                resultsDiv.innerHTML = "<p>数据库未初始化，可能是网络限制导致。请尝试使用 VPN 或联系管理员。</p>";
+                return;
+            }
 
             try {
                 // 获取所有问卷数据
@@ -253,7 +282,7 @@
                 });
             } catch (error) {
                 console.error("分析错误:", error);
-                resultsDiv.innerHTML = `<p>分析失败: ${error.message}</p>`;
+                resultsDiv.innerHTML = `<p>分析失败: ${error.message}<br>可能是网络限制导致，请尝试使用 VPN 或联系管理员。</p>`;
             }
         }
     </script>
