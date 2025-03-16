@@ -19,7 +19,8 @@
 <body>
     <h2>问卷数据分析</h2>
     <button onclick="analyzeData()">分析数据</button>
-    <div id="results">
+    <div id="results"></div>
+    <div>
         <canvas id="genderChart"></canvas>
         <canvas id="ageChart"></canvas>
         <canvas id="roleChart"></canvas>
@@ -121,7 +122,12 @@
                 resultsDiv.innerHTML = `<p>总提交人数: ${totalResponses}</p>`;
 
                 // 性别占比饼图
-                const genderCtx = document.getElementById('genderChart').getContext('2d');
+                const genderCanvas = document.getElementById('genderChart');
+                if (!genderCanvas) {
+                    resultsDiv.innerHTML = "<p>错误：找不到 'genderChart' 元素。请检查页面代码。</p>";
+                    return;
+                }
+                const genderCtx = genderCanvas.getContext('2d');
                 new Chart(genderCtx, {
                     type: 'pie',
                     data: {
@@ -139,7 +145,12 @@
                 });
 
                 // 年龄分布柱状图
-                const ageCtx = document.getElementById('ageChart').getContext('2d');
+                const ageCanvas = document.getElementById('ageChart');
+                if (!ageCanvas) {
+                    resultsDiv.innerHTML = "<p>错误：找不到 'ageChart' 元素。请检查页面代码。</p>";
+                    return;
+                }
+                const ageCtx = ageCanvas.getContext('2d');
                 new Chart(ageCtx, {
                     type: 'bar',
                     data: {
@@ -161,7 +172,12 @@
                 });
 
                 // 岗位分布柱状图
-                const roleCtx = document.getElementById('roleChart').getContext('2d');
+                const roleCanvas = document.getElementById('roleChart');
+                if (!roleCanvas) {
+                    resultsDiv.innerHTML = "<p>错误：找不到 'roleChart' 元素。请检查页面代码。</p>";
+                    return;
+                }
+                const roleCtx = roleCanvas.getContext('2d');
                 new Chart(roleCtx, {
                     type: 'bar',
                     data: {
@@ -183,7 +199,12 @@
                 });
 
                 // 收入范围柱状图
-                const incomeCtx = document.getElementById('incomeChart').getContext('2d');
+                const incomeCanvas = document.getElementById('incomeChart');
+                if (!incomeCanvas) {
+                    resultsDiv.innerHTML = "<p>错误：找不到 'incomeChart' 元素。请检查页面代码。</p>";
+                    return;
+                }
+                const incomeCtx = incomeCanvas.getContext('2d');
                 new Chart(incomeCtx, {
                     type: 'bar',
                     data: {
@@ -205,7 +226,12 @@
                 });
 
                 // 工作时长柱状图
-                const workHoursCtx = document.getElementById('workHoursChart').getContext('2d');
+                const workHoursCanvas = document.getElementById('workHoursChart');
+                if (!workHoursCanvas) {
+                    resultsDiv.innerHTML = "<p>错误：找不到 'workHoursChart' 元素。请检查页面代码。</p>";
+                    return;
+                }
+                const workHoursCtx = workHoursCanvas.getContext('2d');
                 new Chart(workHoursCtx, {
                     type: 'bar',
                     data: {
