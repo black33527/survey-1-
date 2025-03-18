@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中国动画行业从业人员工作生活现状调研</title>
+    <style>
+        body { font-family: "Microsoft YaHei", sans-serif; margin: 20px; }
+        .intro { margin-bottom: 20px; }
+        .question { margin: 15px 0; }
+        .question label { margin-right: 20px; display: inline-block; }
+        .submit-btn { background-color: #07c160; color: white; padding: 10px 20px; border: none; cursor: pointer; }
+        textarea { width: 100%; height: 100px; }
+        select { width: 200px; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min.js"></script>
+</head>
+<body>
+    <div class="intro">
+        <h2>中国动画行业从业人员工作生活现状调研</h2>
+        <p>尊敬的中国动画行业从业人员，您好！我们希望通过本次调研，了解中国动画行业从业人员的工作和生活现状。所有数据匿名处理，预计填写时间：10-15分钟</p>
+    </div>
+
+    <form id="surveyForm" onsubmit="submitForm(event)">
+        <!-- Q1 性别 -->
+        <div class="question">
+            <p><strong>Q1. 您的性别是？*</strong></p>
+            <label><input type="radio" name="q1" value="女" required> 女</label>
+            <label><input type="radio" name="q1" value="男"> 男</label>
+        </div>
+
+        <!-- Q2 年龄 -->
+        <div class="question">
+            <p><strong>Q2. 您的年龄是？*</strong></p>
+            <label><input type="radio" name="q2" value="18-23" required> 18-23周岁</label>
+            <label><input type="radio" name="q2" value="24-35"> 24-35周岁</label>
+            <label><input type="radio" name="q2" value="36-47"> 36-47周岁</label>
+            <label><input type="radio" name="q2" value="48-59"> 48-59周岁</label>
+            <label><input type="radio" name="q2" value="60以上"> 60周岁及以上</label>
+        </div>
+
+        <!-- Q3 从业年限 -->
+        <div class="question">
+            <p><strong>Q3. 您在中国动画行业的从业年限是？*</strong></p>
+            <label><input type="radio" name="q3" value="2年以下" required> 2年以下</label>
+            <label><input type="radio" name="q3" value="2-5年"> 2-5年</label>
+            <label><input type="radio" name="q3" value="5-10年"> 5-10年</label>
+            <label><input type="radio" name="q3" value="10-20年"> 10-20年</label>
+            <label><input type="radio" name="q3" value="20年以上"> 20年以上</label>
+        </div>
+
+        <!-- Q4 专业岗位 -->
+        <div class="question">
+            <p><strong>Q4. 您目前从事的专业岗位是？*</strong></p>
+            <label><input type="radio" name="q4" value="原画设计" required> 原画设计</label>
+            <label><input type="radio" name="q4" value="3D建模/渲染"> 3D建模/渲染</label>
+            <label><input type="radio" name="q4" value="动画制作"> 动画制作</label>
+            <label><input type="radio" name="q4" value="后期剪辑/特效"> 后期剪辑/特效</label>
+            <label><input type="radio" name="q4" value="编剧/导演"> 编剧/导演</label>
+            <label><input type="radio" name="q4" value="其他"> 其他</label>
+        </div>
+
+        <!-- Q5 居住地 -->
+        <div class="question">
+            <p><strong>Q5. 您目前的居住地是？*</strong></p>
+            <select name="q5" required>
+                <option value="">请选择</option>
+                <option value="北京市">北京市</option>
+                <option value="上海市">上海市</option>
+                <option value="广东省-广州市">广东省-广州市</option>
+                <option value="四川省-成都市">四川省-成都市</option>
+                <option value="浙江省-杭州市">浙江省-杭州市</option>
+            </select>
+        </div>
+
+        <!-- Q6 从业地点 -->
+        <div class="question">
+            <p><strong>Q6. 您在何处从业？*</strong></p>
+            <label><input type="radio" name="q6" value="本地从业" required> 在居住地本地从业</label>
+            <label><input type="radio" name="q6" value="远程异地从业"> 在居住地远程异地从业</label>
+            <label><input type="radio" name="q6" value="通勤异地从业"> 在居住地通勤异地从业</label>
+        </div>
+
+        <!-- Q7 就业状态 -->
+        <div class="question">
+            <p><strong>Q7. 您目前的就业状态是？*</strong></p>
+            <label><input type="radio" name="q7" value="全职" required> 全职</label>
+            <label><input type="radio" name="q7" value="兼职"> 兼职</label>
+            <label><input type="radio" name="q7" value="实习"> 实习</label>
+            <label><input type="radio" name="q7" value="灵活就业"> 灵活就业</label>
+            <label><input type="radio" name="q7" value="用爱发电"> “用爱发电”</label>
+            <label><input type="radio" name="q7" value="退休"> 退休</label>
+            <label><input type="radio" name="q7" value="未就业"> 未就业</label>
+        </div>
+
+        <!-- Q8 就业状态满意度 -->
+        <div class="question">
+            <p><strong>Q8. 您对当前的就业状态是否满意？*</strong></p>
+            <label><input type="radio" name="q8" value="满意" required> 满意</label>
+            <label><input type="radio" name="q8" value="比较满意"> 比较满意</label>
+            <label><input type="radio" name="q8" value="不太满意"> 不太满意</label>
+            <label><input type="radio" name="q8" value="不满意"> 不满意</label>
+        </div>
+
+        <!-- Q9 月收入范围 -->
+        <div class="question">
+            <p><strong>Q9. 您目前的月收入范围是？*</strong></p>
+            <label><input type="radio" name="q9" value="低于最低工资" required> 低于所在地最低工资标准</label>
+            <label><input type="radio" name="q9" value="最低至平均"> 介于最低工资标准和社会平均工资之间</label>
+            <label><input type="radio" name="q9" value="平均至三倍"> 介于社会平均工资和社会平均工资的300%之间</label>
+            <label><input type="radio" name="q9" value="高于三倍"> 高于社会平均工资的300%</label>
+        </div>
+
+        <!-- Q10 收入满意度 -->
+        <div class="question">
+            <p><strong>Q10. 您对当前的收入情况是否满意？*</strong></p>
+            <label><input type="radio" name="q10" value="满意" required> 满意</label>
+            <label><input type="radio" name="q10" value="比较满意"> 比较满意</label>
+            <label><input type="radio" name="q10" value="不太满意"> 不太满意</label>
+            <label><input type="radio" name="q10" value="不满意"> 不满意</label>
+        </div>
+
+        <!-- Q11 工作时长 -->
+        <div class="question">
+            <p><strong>Q11. 您每周的（全年平均）工作时长是？*</strong></p>
+            <label><input type="radio" name="q11" value="40小时以下" required> 40小时以下（含40小时）</label>
+            <label><input type="radio" name="q11" value="40-55小时"> 40小时至55小时（含55小时）</label>
+            <label><input type="radio" name="q11" value="55小时以上"> 55小时以上</label>
+        </div>
+
+        <!-- Q12 工作时长满意度 -->
+        <div class="question">
+            <p><strong>Q12. 您对当前的平均工作时长是否满意？*</strong></p>
+            <label><input type="radio" name="q12" value="满意" required> 满意</label>
+            <label><input type="radio" name="q12" value="比较满意"> 比较满意</label>
+            <label><input type="radio" name="q12" value="不太满意"> 不太满意</label>
+            <label><input type="radio" name="q12" value="不满意"> 不满意</label>
+        </div>
+
+        <!-- Q13 工作天数 -->
+        <div class="question">
+            <p><strong>Q13. 您每周的（全年平均）工作天数是？*</strong></p>
+            <label><input type="radio" name="q13" value="5天以下" required> 5天以下</label>
+            <label><input type="radio" name="q13" value="5天"> 5天</label>
+            <label><input type="radio" name="q13" value="6天"> 6天</label>
+            <label><input type="radio" name="q13" value="7天"> 7天</label>
+        </div>
+
+        <!-- Q14 工作天数满意度 -->
+        <div class="question">
+            <p><strong>Q14. 您对当前的平均工作天数是否满意？*</strong></p>
+            <label><input type="radio" name="q14" value="满意" required> 满意</label>
+            <label><input type="radio" name="q14" value="比较满意"> 比较满意</label>
+            <label><input type="radio" name="q14" value="不太满意"> 不太满意</label>
+            <label><input type="radio" name="q14" value="不满意"> 不满意</label>
+        </div>
+
+        <!-- Q15 年休假天数 -->
+        <div class="question">
+            <p><strong>Q15. 您每年实休的带薪年休假（不含周末和法定节假日）天数是？*</strong></p>
+            <label><input type="radio" name="q15" value="5天以下" required> 5天以下</label>
+            <label><input type="radio" name="q15" value="5-10天"> 5-10天</label>
+            <label><input type="radio" name="q15" value="10-15天"> 10-15天</label>
+            <label><input type="radio" name="q15" value="15天以上"> 15天以上</label>
+        </div>
+
+        <!-- Q16 年休假满意度 -->
+        <div class="question">
+            <p><strong>Q16. 您对当前的带薪年休假天数是否满意？*</strong></p>
+            <label><input type="radio" name="q16" value="满意" required> 满意</label>
+            <label><input type="radio" name="q16" value="比较满意"> 比较满意</label>
+            <label><input type="radio" name="q16" value="不太满意"> 不太满意</label>
+            <label><input type="radio" name="q16" value="不满意"> 不满意</label>
+        </div>
+
+        <!-- Q17 工作压力 -->
+        <div class="question">
+            <p><strong>Q17. 您目前对工作压力的感受是？*</strong></p>
+            <label><input type="radio" name="q17" value="无压力" required> 无压力</label>
+            <label><input type="radio" name="q17" value="略有压力"> 略有压力，可以承受</label>
+            <label><input type="radio" name="q17" value="压力较大"> 压力较大</label>
+            <label><input type="radio" name="q17" value="压力极大"> 压力极大</label>
+        </div>
+
+        <!-- Q18 工作压力满意度 -->
+        <div class="question">
+            <p><strong>Q18. 您对当前的工作压力情况是否满意？*</strong></p>
+            <label><input type="radio" name="q18" value="满意" required> 满意</label>
+            <label><input type="radio" name="q18" value="比较满意"> 比较满意</label>
+            <label><input type="radio" name="q18" value="不太满意"> 不太满意</label>
+            <label><input type="radio" name="q18" value="不满意"> 不满意</label>
+        </div>
+
+        <!-- Q19 工作能力变化 -->
+        <div class="question">
+            <p><strong>Q19. 您目前对自身工作能力（仅限职业技能）变化的感受是？*</strong></p>
+            <label><input type="radio" name="q19" value="大幅提升" required> 近两年有大幅提升</label>
+            <label><input type="radio" name="q19" value="窄幅提升"> 近两年有窄幅提升</label>
+            <label><input type="radio" name="q19" value="进步缓慢"> 近两年进步缓慢</label>
+            <label><input type="radio" name="q19" value="原地踏步"> 近两年原地踏步</label>
+            <label><input type="radio" name="q19" value="有退步"> 近两年有退步</label>
+        </div>
+
+        <!-- Q20 工作能力满意度 -->
+        <div class="question">
+            <p><strong>Q20. 您对当前的工作能力（仅限职业技能）变化是否满意？*</strong></p>
+            <label><input type="radio" name="q20" value="满意" required> 满意</label>
+            <label><input type="radio" name="q20" value="比较满意"> 比较满意</label>
+            <label><input type="radio" name="q20" value="不太满意"> 不太满意</label>
+            <label><input type="radio" name="q20" value="不满意"> 不满意</label>
+        </div>
+
+        <!-- Q21 身体健康状况 -->
+        <div class="question">
+            <p><strong>Q21. 您目前的身体健康状况是？*</strong></p>
+            <label><input type="radio" name="q21" value="非常健康" required> 非常健康</label>
+            <label><input type="radio" name="q21" value="比较健康偶发常见病"> 比较健康，偶发常见疾病或偶见体检指标异常</label>
+            <label><input type="radio" name="q21" value="比较健康偶发职业病"> 比较健康，偶发职业病或心理疾病</label>
+            <label><input type="radio" name="q21" value="不太健康多发疾病"> 不太健康，多发疾病或多见体检指标异常</label>
+            <label><input type="radio" name="q21" value="不太健康多发职业病"> 不太健康，多发职业病或心理疾病</label>
+            <label><input type="radio" name="q21" value="非常不健康"> 非常不健康，经历重大慢性疾病</label>
+        </div>
+
+        <!-- Q22 健康满意度 -->
+        <div class="question">
+            <p><strong>Q22. 您对当前的身体健康状况是否满意？*</strong></p>
+            <label><input type="radio" name="q22" value="满意" required> 满意</label>
+            <label><input type="radio" name="q22" value="比较满意"> 比较满意</label>
+            <label><input type="radio" name="q22" value="不太满意"> 不太满意</label>
+            <label><input type="radio" name="q22" value="不满意"> 不满意</label>
+        </div>
+
+        <!-- Q23 家庭支持 -->
+        <div class="question">
+            <p><strong>Q23. 您的家庭对您在中国动画行业从业是否理解、支持？*</strong></p>
+            <label><input type="radio" name="q23" value="理解并支持" required> 理解并支持</label>
+            <label><input type="radio" name="q23" value="理解但不支持"> 理解但缺乏支持</label>
+            <label><input type="radio" name="q23" value="不支持但理解"> 缺乏理解但支持</label>
+            <label><input type="radio" name="q23" value="不支持不理解"> 缺乏理解并缺乏支持</label>
+        </div>
+
+        <!-- Q24 社会关系支持 -->
+        <div class="question">
+            <p><strong>Q24. 您的社会关系对您在中国动画行业从业是否理解、支持？*</strong></p>
+            <label><input type="radio" name="q24" value="理解并支持" required> 理解并支持</label>
+            <label><input type="radio" name="q24" value="理解但不支持"> 理解但缺乏支持</label>
+            <label><input type="radio" name="q24" value="不支持但理解"> 缺乏理解但支持</label>
+            <label><input type="radio" name="q24" value="不支持不理解"> 缺乏理解并缺乏支持</label>
+        </div>
+
+        <!-- Q25 外界支持 -->
+        <div class="question">
+            <p><strong>Q25. 外界对您在中国动画行业从业是否理解、支持？*</strong></p>
+            <label><input type="radio" name="q25" value="理解并支持" required> 理解并支持</label>
+            <label><input type="radio" name="q25" value="理解但不支持"> 理解但缺乏支持</label>
+            <label><input type="radio" name="q25" value="不支持但理解"> 缺乏理解但支持</label>
+            <label><input type="radio" name="q25" value="不支持不理解"> 缺乏理解并缺乏支持</label>
+        </div>
+
+        <!-- Q26 社会支持满意度 -->
+        <div class="question">
+            <p><strong>Q26. 您对当前在中国动画行业从业所收获的社会支持状况是否满意？*</strong></p>
+            <label><input type="radio" name="q26" value="满意" required> 满意</label>
+            <label><input type="radio" name="q26" value="比较满意"> 比较满意</label>
+            <label><input type="radio" name="q26" value="不太满意"> 不太满意</label>
+            <label><input type="radio" name="q26" value="不满意"> 不满意</label>
+        </div>
+
+        <!-- Q27 专业水平认可 -->
+        <div class="question">
+            <p><strong>Q27. 您所在专业领域内对您的专业水平是否认可？*</strong></p>
+            <label><input type="radio" name="q27" value="完全认可有职称" required> 完全认可并取得职称</label>
+            <label><input type="radio" name="q27" value="比较认可无职称"> 比较认可但未取得职称</label>
+            <label><input type="radio" name="q27" value="基本认可无职称"> 基本认可但未取得职称</label>
+            <label><input type="radio" name="q27" value="缺乏认可"> 缺乏认可</label>
+            <label><input type="radio" name="q27" value="完全不认可"> 完全不认可</label>
+        </div>
+
+        <!-- Q28 外界认可 -->
+        <div class="question">
+            <p><strong>Q28. 外界对您的专业水平是否认可？*</strong></p>
+            <label><input type="radio" name="q28" value="完全认可多评价" required> 完全认可，取得大量评价</label>
+            <label><input type="radio" name="q28" value="比较认可一定评价"> 比较认可，取得一定评价</label>
+            <label><input type="radio" name="q28" value="基本认可积累中"> 基本认可，尚在积累评价</label>
+            <label><input type="radio" name="q28" value="缺乏认可"> 缺乏认可，缺乏评价</label>
+            <label><input type="radio" name="q28" value="完全不认可负面"> 完全不认可，评价负面</label>
+        </div>
+
+        <!-- Q29 社会地位满意度 -->
+        <div class="question">
+            <p><strong>Q29. 您对当前所在专业的社会地位与社会认同状况是否满意？*</strong></p>
+            <label><input type="radio" name="q29" value="满意" required> 满意</label>
+            <label><input type="radio" name="q29" value="比较满意"> 比较满意</label>
+            <label><input type="radio" name="q29" value="不太满意"> 不太满意</label>
+            <label><input type="radio" name="q29" value="不满意"> 不满意</label>
+        </div>
+
+        <!-- Q30 职业发展前景 -->
+        <div class="question">
+            <p><strong>Q30. 您目前对个人职业发展前景的感受是？*</strong></p>
+            <label><input type="radio" name="q30" value="空间广阔路径清晰" required> 空间广阔，路径清晰</label>
+            <label><input type="radio" name="q30" value="空间有限或路径模糊"> 空间有限或路径模糊</label>
+            <label><input type="radio" name="q30" value="空间有限且路径模糊"> 空间有限且路径模糊</label>
+            <label><input type="radio" name="q30" value="无空间或无路径"> 无空间或无路径</label>
+            <label><input type="radio" name="q30" value="无空间且无路径"> 无空间且无路径</label>
+        </div>
+
+        <!-- Q31 职业发展满意度 -->
+        <div class="question">
+            <p><strong>Q31. 您对当前个人职业发展前景是否满意？*</strong></p>
+            <label><input type="radio" name="q31" value="满意" required> 满意</label>
+            <label><input type="radio" name="q31" value="比较满意"> 比较满意</label>
+            <label><input type="radio" name="q31" value="不太满意"> 不太满意</label>
+            <label><input type="radio" name="q31" value="不满意"> 不满意</label>
+        </div>
+
+        <!-- Q32 希望改善方面 -->
+        <div class="question">
+            <p><strong>Q32. 您自身迫切希望得到改善的是？*</strong></p>
+            <label><input type="radio" name="q32" value="就业状态" required> 就业状态</label>
+            <label><input type="radio" name="q32" value="劳动报酬"> 劳动报酬</label>
+            <label><input type="radio" name="q32" value="工作时长节律休假"> 工作时长、节律、休假</label>
+            <label><input type="radio" name="q32" value="工作压力"> 工作压力</label>
+            <label><input type="radio" name="q32" value="职业技能"> 工作能力（职业技能）</label>
+            <label><input type="radio" name="q32" value="非职业技能"> 工作能力（非职业技能）</label>
+            <label><input type="radio" name="q32" value="身体健康"> 身体健康</label>
+            <label><input type="radio" name="q32" value="物理环境"> 工作环境（物理环境）</label>
+            <label><input type="radio" name="q32" value="社会支持"> 工作环境（社会环境与个人所获社会支持）</label>
+            <label><input type="radio" name="q32" value="社会地位"> 职业环境（社会地位与社会认同）</label>
+            <label><input type="radio" name="q32" value="职业发展"> 职业环境（个人职业发展）</label>
+            <label><input type="radio" name="q32" value="其他"> 其他</label>
+        </div>
+
+        <!-- Q33 是否离开行业 -->
+        <div class="question">
+            <p><strong>Q33. 您是否曾经离开过中国动画行业？*</strong></p>
+            <label><input type="radio" name="q33" value="短暂离开" required> 是，短暂离开过</label>
+            <label><input type="radio" name="q33" value="长时间离开"> 是，离开过很长一段时间</label>
+            <label><input type="radio" name="q33" value="从未离开"> 否，从未离开</label>
+        </div>
+
+        <!-- Q34 项目数量变化 -->
+        <div class="question">
+            <p><strong>Q34. 《哪吒之魔童闹海》上映后，您参与的工作项目数量是否产生了明显变化？*</strong></p>
+            <label><input type="radio" name="q34" value="显著增加" required> 项目数量显著增加</label>
+            <label><input type="radio" name="q34" value="略有增加"> 项目数量略有增加</label>
+            <label><input type="radio" name="q34" value="无变化"> 项目数量无变化</label>
+            <label><input type="radio" name="q34" value="减少"> 项目数量减少</label>
+        </div>
+
+        <!-- Q35 境况改善（多选） -->
+        <div class="question">
+            <p><strong>Q35. 《哪吒之魔童闹海》上映后，您哪些方面的境况得到了切实改善？*</strong></p>
+            <label><input type="checkbox" name="q35" value="就业状态"> 就业状态</label>
+            <label><input type="checkbox" name="q35" value="收入情况"> 收入情况</label>
+            <label><input type="checkbox" name="q35" value="工作时长节律休假"> 工作时长、节律、休假等</label>
+            <label><input type="checkbox" name="q35" value="工作压力"> 工作压力</label>
+            <label><input type="checkbox" name="q35" value="职业技能"> 工作能力（职业技能）</label>
+            <label><input type="checkbox" name="q35" value="非职业技能"> 工作能力（非职业技能）</label>
+            <label><input type="checkbox" name="q35" value="身体健康"> 身体健康</label>
+            <label><input type="checkbox" name="q35" value="物理环境"> 工作环境（物理环境）</label>
+            <label><input type="checkbox" name="q35" value="社会支持"> 工作环境（社会环境与个人所获社会支持）</label>
+            <label><input type="checkbox" name="q35" value="社会地位"> 职业环境（本专业社会地位与社会认同）</label>
+            <label><input type="checkbox" name="q35" value="职业发展"> 职业环境（本人职业发展）</label>
+            <label><input type="checkbox" name="q35" value="其他"> 其他</label>
+        </div>
+
+        <!-- Q36 行业发展影响 -->
+        <div class="question">
+            <p><strong>Q36. 您认为《哪吒之魔童闹海》的成功对中国动画行业未来的发展有何影响？*</strong></p>
+            <label><input type="radio" name="q36" value="长期显著推动" required> 在未来很长一段时间具有显著推动作用</label>
+            <label><input type="radio" name="q36" value="长期隐性推动"> 在未来很长一段时间具有隐性推动作用</label>
+            <label><input type="radio" name="q36" value="短期显著推动"> 短期内具有显著推动作用</label>
+            <label><input type="radio" name="q36" value="短期隐性推动"> 短期内具有隐性推动作用</label>
+            <label><input type="radio" name="q36" value="无影响"> 无影响</label>
+        </div>
+
+        <!-- Q37 未来5年态度 -->
+        <div class="question">
+            <p><strong>Q37. 您对未来5年中国动画行业的发展状况持什么态度？*</strong></p>
+            <label><input type="radio" name="q37" value="乐观" required> 乐观</label>
+            <label><input type="radio" name="q37" value="比较乐观"> 比较乐观</label>
+            <label><input type="radio" name="q37" value="中立"> 中立</label>
+            <label><input type="radio" name="q37" value="比较悲观"> 比较悲观</label>
+            <label><input type="radio" name="q37" value="悲观"> 悲观</label>
+        </div>
+
+        <!-- Q38 主管部门关注 -->
+        <div class="question">
+            <p><strong>Q38. 您希望行业主管部门关注和改善哪些方面的问题和困难？*</strong></p>
+            <label><input type="checkbox" name="q38" value="劳动保障"> 劳动保障方面</label>
+            <label><input type="checkbox" name="q38" value="劳动报酬"> 劳动报酬方面</label>
+            <label><input type="checkbox" name="q38" value="职业环境"> 职业环境（发展状况、技术含量等）</label>
+            <label><input type="checkbox" name="q38" value="职业技能提升"> 职业技能提升方面</label>
+            <label><input type="checkbox" name="q38" value="职业水平评价"> 职业水平评价（含职称评审）方面</label>
+            <label><input type="checkbox" name="q38" value="扶持政策"> 扶持政策方面</label>
+            <label><input type="checkbox" name="q38" value="支持资金"> 支持资金（购买服务）方面</label>
+            <label><input type="checkbox" name="q38" value="链接资源"> 链接行业资源方面</label>
+            <label><input type="checkbox" name="q38" value="其他"> 其他</label>
+        </div>
+
+        <!-- Q39 行业看法 -->
+        <div class="question">
+            <p><strong>Q39. 您对中国动画行业的现状有何看法或建议？</strong></p>
+            <textarea name="q39" placeholder="请畅所欲言"></textarea>
+        </div>
+
+        <!-- Q40 个人展望 -->
+        <div class="question">
+            <p><strong>Q40. 您对您在中国动画行业的发展有何展望或期许？</strong></p>
+            <textarea name="q40" placeholder="请畅所欲言"></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn">提交问卷</button>
+    </form>
+
+    <script>
+        AV.init({
+            appId: 'TOqOLRataPa2yKQyNqxlhyXr-gzGzoHsz', // 替换为你的 LeanCloud App ID
+            appKey: 'ssN0pR7gVGUR8hcEp0oPhICl', // 替换为你的 LeanCloud App Key
+            serverURL: 'https://TOqOLRataPa2yKQyNqxlhyXr-gzGzoHsz.leancloud.cn' // 替换为你的 serverURL
+        });
+
+        function submitForm(event) {
+            event.preventDefault();
+            const form = document.getElementById('surveyForm');
+            const formData = new FormData(form);
+            let data = {};
+
+            /
