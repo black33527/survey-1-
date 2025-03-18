@@ -3,15 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>问卷调查</title>
+    <title>中国动画行业调研</title>
     <style>
         body { font-family: "Microsoft YaHei", sans-serif; margin: 20px; text-align: center; }
-        a { margin: 10px; font-size: 18px; }
+        a { display: block; margin: 10px 0; font-size: 18px; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
     <h2>中国动画行业从业人员工作生活现状调研</h2>
-    <p><a href="survey.html">填写问卷</a></p>
-    <p><a href="analyze.html">查看分析</a></p>
+    <p>欢迎参与本次调研！</p>
+    <a href="survey_v2.html">调查问卷</a>
+    <a id="analyzeLink" href="analyze_v2.html">数据分析</a>
+
+    <script>
+        // 获取 URL 参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const view = urlParams.get('view');
+
+        // 如果 URL 中没有 ?view=admin 参数，隐藏数据分析链接
+        if (view !== 'admin') {
+            document.getElementById('analyzeLink').classList.add('hidden');
+        }
+    </script>
 </body>
 </html>
