@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>问卷数据分析</title>
+    <style>
+        body { font-family: "Microsoft YaHei", sans-serif; margin: 20px; }
+        h2 { color: #333; }
+        .result { margin: 10px 0; }
+        canvas { max-width: 400px; margin: 20px 0; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/Chart.js/4.4.2/chart.min.js"></script>
+</head>
+<body>
+    <h2>问卷数据分析</h2>
+    <button onclick="analyzeData()">分析数据</button>
+    <div id="results"></div>
+    <div>
+        <canvas id="genderChart"></canvas>
+        <canvas id="ageChart"></canvas>
+        <canvas id="roleChart"></canvas>
+        <canvas id="incomeChart"></canvas>
+        <canvas id="workHoursChart"></canvas>
+        <canvas id="workDaysChart"></canvas>
+        <canvas id="vacationChart"></canvas>
+        <canvas id="pressureChart"></canvas>
+        <canvas id="skillChangeChart"></canvas>
+        <canvas id="healthChart"></canvas>
+        <canvas id="familySupportChart"></canvas>
+        <canvas id="socialSupportChart"></canvas>
+        <canvas id="externalSupportChart"></canvas>
+        <canvas id="supportSatisfactionChart"></canvas>
+        <canvas id="professionalRecognitionChart"></canvas>
+        <canvas id="externalRecognitionChart"></canvas>
+        <canvas id="statusSatisfactionChart"></canvas>
+        <canvas id="careerProspectChart"></canvas>
+        <canvas id="careerSatisfactionChart"></canvas>
+        <canvas id="improvementChart"></canvas>
+        <canvas id="leaveIndustryChart"></canvas>
+        <canvas id="projectChangeChart"></canvas>
+        <canvas id="nezhaImpactChart"></canvas>
+        <canvas id="futureOutlookChart"></canvas>
+    </div>
+
+    <script>
+        AV.init({
+            appId: 'YOUR_APP_ID', // 替换为你的 LeanCloud App ID
+            appKey: 'YOUR_APP_KEY', // 替换为你的 LeanCloud App Key
+            serverURL: 'https://YOUR_APP_ID.leancloud.cn' // 替换为你的 serverURL
+        });
+
+        async function analyzeData() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = "正在分析...";
+
+            const query = new AV.Query('Survey');
+            try {
+                const results = await query.find();
+                if (results.length === 0) {
+                    resultsDiv.innerHTML = "<p>暂无数据，请先提交问卷。</p>";
+                    return;
+                }
+
+                // 统计各问题的数据
+                const stats = {
+                    q1: { labels: ["男", "女"], count: { "男": 0, "女": 0 } },
+                    q2: { labels: ["18-23", "24-35", "36-47", "48-59", "60以上"], count: { "18-23": 0, "24-35": 0, "36-47": 0, "48-59": 0, "60以上": 0 } },
+                    q3: { labels: ["2年以下", "2-5年", "5-10年", "10-20年", "20年以上"], count: { "2年以下": 0, "2-5年": 0, "5-10年": 0, "10-20年": 0, "20年以上": 0 } },
+                    q4: { labels: ["原画设计", "3D建模/渲染", "动画制作", "后期剪辑/特效", "编剧/导演", "其他"], count: { "原画设计": 0, "3D建模/渲染": 0, "动画制作": 0, "后期剪辑/特效": 0, "编剧/导演": 0, "其他": 0 } },
+                    q5: { labels: ["北京市", "上海市", "广东省-广州市", "四川省-成都市", "浙江省-杭州市"], count: { "北京市": 0, "上海市": 0, "广东省-广州市": 0, "四川省-成都市": 0, "浙江省-杭州市": 0 } },
+                    q6: { labels: ["本地从业", "远程异地从业", "通勤异地从业"], count: { "本地从业": 0, "远程异地从业": 0, "通勤异地从业": 0 } },
+                    q7: { labels: ["全职", "兼职", "实习", "灵活就业", "用爱发电", "退休", "未就业"], count: { "全职": 0, "兼职": 0, "实习": 0, "灵活就业": 0, "用爱发电": 0, "退休": 0, "未就业": 0 } },
+                    q8: { labels: ["满意", "比较满意", "不太满意", "不满意"], count: { "满意": 0, "比较满意": 0, "不太满意": 0, "不满意": 0 } },
+                    q9: { labels: ["低于最低工资", "最低至平均", "平均至三倍", "高于三倍"], count: { "低于最低工资": 0, "最低至平均": 0, "平均至三倍": 0, "高于三倍": 0 } },
+                    q10: { labels: ["满意", "比较满意", "不太满意", "不满意"], count: { "满意": 0, "比较满意": 0, "不太满意": 0, "不满意": 0 } },
+                    q11: { labels: ["40小时以下", "40-55小时", "55小时以上"], count: { "40小时以下": 0, "40-55小时": 0, "55小时以上": 0 } },
+                    q12: { labels: ["满意", "比较满意", "不太满意", "不满意"], count: { "满意": 0, "比较满意": 0, "不太满意": 0, "不满意": 0 } },
+                    q13: { labels: ["5天以下", "5天", "6天", "7天"], count: { "5天以下": 0, "5天": 0, "6天": 0, "7天": 0 } },
+                    q14: { labels: ["满意", "比较满意", "不太满意", "不满意"], count: { "满意": 0, "比较满意": 0, "不太满意": 0, "不满意": 0 } },
+                    q15: { labels: ["5天以下", "5-10天", "10-15天", "15天以上"], count: { "5天以下": 0, "5-10天": 0, "10-15天": 0, "15天以上": 0 } },
+                    q16: { labels: ["满意", "比较满意", "不太满意", "不满意"], count: { "满意": 0, "比较满意": 0, "不太满意": 0, "不满意": 0 } },
+                    q17: { labels: ["无压力", "略有压力", "压力较大", "压力极大"], count: { "无压力": 0, "略有压力": 0, "压力较大": 0, "压力极大": 0 } },
+                    q18: { labels: ["满意", "比较满意", "不太满意", "不满意"], count: { "满意": 0, "比较满意": 0, "不太满意": 0, "不满意": 0 } },
+                    q19: { labels: ["大幅提升", "窄幅提升", "进步缓慢", "原地踏步", "有退步"], count: { "大幅提升": 0, "窄幅提升": 0, "进步缓慢": 0, "原地踏步": 0, "有退步": 0 } },
+                    q20: { labels: ["满意", "比较满意", "不太满意", "不满意"], count: { "满意": 0, "比较满意": 0, "不太满意": 0, "不满意": 0 } },
+                    q21: { labels: ["非常健康", "比较健康偶发常见病", "比较健康偶发职业病", "不太健康多发疾病", "不太健康多发职业病", "非常不健康"], count: { "非常健康": 0, "比较健康偶发常见病": 0, "比较健康偶发职业病": 0, "不太健康多发疾病": 0, "不太健康多发职业病": 0, "非常不健康": 0 } },
+                    q22: { labels: ["满意", "比较满意", "不太满意", "不满意"], count: { "满意": 0, "比较满意": 0, "不太满意": 0, "不满意": 0 } },
+                    q23: { labels: ["理解并支持", "理解但不支持", "不支持但理解", "不支持不理解"], count: { "理解并支持": 0, "理解但不支持": 0, "不支持但理解": 0, "不支持不理解": 0 } },
+                    q24: { labels: ["理解并支持", "理解但不支持", "不支持但理解", "不支持不理解"], count: { "理解并支持": 0, "理解但不支持": 0, "不支持但理解": 0, "不支持不理解": 0 } },
+                    q25: { labels: ["理解并支持", "理解但不支持", "不支持但理解", "不支持不理解"], count: { "理解并支持": 0, "理解但不支持": 0, "不支持但理解": 0, "不支持不理解": 0 } },
+                    q26: { labels: ["满意", "比较满意", "不太满意", "不满意"], count: { "满意": 0, "比较满意": 0, "不太满意": 0, "不满意": 0 } },
+                    q27: { labels: ["完全认可有职称", "比较认可无职称", "基本认可无职称", "缺乏认可", "完全不认可"], count: { "完全认可有职称": 0, "比较认可无职称": 0, "基本认可无职称": 0, "缺乏认可": 0, "完全不认可": 0 } },
+                    q28: { labels: ["完全认可多评价", "比较认可一定评价", "基本认可积累中", "缺乏认可", "完全不认可负面"], count: { "完全认可多评价": 0, "比较认可一定评价": 0, "基本认可积累中": 0, "缺乏认可": 0, "完全不认可负面": 0 } },
+                    q29: { labels: ["满意", "比较满意", "不太满意", "不满意"], count: { "满意": 0, "比较满意": 0, "不太满意": 0, "不满意": 0 } },
+                    q30: { labels: ["空间广阔路径清晰", "空间有限或路径模糊", "空间有限且路径模糊", "无空间或无路径", "无空间且无路径"], count: { "空间广阔路径清晰": 0, "空间有限或路径模糊": 0, "空间有限且路径模糊": 0, "无空间或无路径": 0, "无空间且无路径": 0 } },
+                    q31: { labels: ["满意", "比较满意", "不太满意", "不满意"], count: { "满意": 0, "比较满意": 0, "不太满意": 0, "不满意": 0 } },
+                    q32: { labels: ["就业状态", "劳动报酬", "工作时长节律休假", "工作压力", "职业技能", "非职业技能", "身体健康", "物理环境", "社会支持", "社会地位", "职业发展", "其他"], count: { "就业状态": 0, "劳动报酬": 0, "工作时长节律休假": 0, "工作压力": 0, "职业技能": 0, "非职业技能": 0, "身体健康": 0, "物理环境": 0, "社会支持": 0, "社会地位": 0, "职业发展": 0, "其他": 0 } },
+                    q33: { labels: ["短暂离开", "长时间离开", "从未离开"], count: { "短暂离开": 0, "长时间离开": 0, "从未离开": 0 } },
+                    q34: { labels: ["显著增加", "略有增加", "无变化", "减少"], count: { "显著增加": 0, "略有增加": 0, "无变化": 0, "减少": 0 } },
+                    q36: { labels: ["长期显著推动", "长期隐性推动", "短期显著推动", "短期隐性推动", "无影响"], count: { "长期显著推动": 0, "长期隐性推动": 0, "短期显著推动": 0, "短期隐性推动": 0, "无影响": 0 } },
+                    q37: { labels: ["乐观", "比较乐观", "中立", "比较悲观", "悲观"], count: { "乐观": 0, "比较乐观": 0, "中立": 0, "比较悲观": 0, "悲观": 0 } }
+                };
+
+                results.forEach(item => {
+                    const attrs = item.attributes;
+                    for (let q = 1; q <= 37; q++) {
+                        if (q !== 35 && q !== 38) {
+                            const value = attrs[`q${q}`] || '';
+                            if (stats[`q${q}`].labels.includes(value)) {
+                                stats[`q${q}`].count[value]++;
+                            }
+                        }
+                    }
+                });
+
+                resultsDiv.innerHTML = `<p>总提交人数: ${results.length}</p>`;
+
+                // 创建图表
+                const charts = [
+                    { id: 'genderChart', data: stats.q1, title: 'Q1 性别占比' },
+                    { id: 'ageChart', data: stats.q2, title: 'Q2 年龄分布' },
+                    { id: 'roleChart', data: stats.q4, title: 'Q4 岗位分布' },
+                    { id: 'incomeChart', data: stats.q9, title: 'Q9 月收入范围' },
+                    { id: 'workHoursChart', data: stats.q11, title: 'Q11 工作时长' },
+                    { id: 'workDaysChart', data: stats.q13, title: 'Q13 工作天数' },
+                    { id: 'vacationChart', data: stats.q15, title: 'Q15 年休假天数' },
+                    { id: 'pressureChart', data: stats.q17, title: 'Q17 工作压力' },
+                    { id: 'skillChangeChart', data: stats.q19, title: 'Q19 工作能力变化' },
+                    { id: 'healthChart', data: stats.q21, title: 'Q21 身体健康状况' },
+                    { id: 'familySupportChart', data: stats.q23, title: 'Q23 家庭支持' },
+                    { id: 'socialSupportChart', data: stats.q24, title: 'Q24 社会关系支持' },
+                    { id: 'externalSupportChart', data: stats.q25, title: 'Q25 外界支持' },
+                    { id: 'supportSatisfactionChart', data: stats.q26, title: 'Q26 社会支持满意度' },
+                    { id: 'professionalRecognitionChart', data: stats.q27, title: 'Q27 专业水平认可' },
+                    { id: 'externalRecognitionChart', data: stats.q28, title: 'Q28 外界认可' },
+                    { id: 'statusSatisfactionChart', data: stats.q29, title: 'Q29 社会地位满意度' },
+                    { id: 'careerProspectChart', data: stats.q30, title: 'Q30 职业发展前景' },
+                    { id: 'careerSatisfactionChart', data: stats.q31, title: 'Q31 职业发展满意度' },
+                    { id: 'improvementChart', data: stats.q32, title: 'Q32 希望改善方面' },
+                    { id: 'leaveIndustryChart', data: stats.q33, title: 'Q33 是否离开行业' },
+                    { id: 'projectChangeChart', data: stats.q34, title: 'Q34 项目数量变化' },
+                    { id: 'nezhaImpactChart', data: stats.q36, title: 'Q36 行业发展影响' },
+                    { id: 'futureOutlookChart', data: stats.q37, title: 'Q37 未来5年态度' }
+                ];
+
+                charts.forEach(chart => {
+                    const ctx = document.getElementById(chart.id).getContext('2d');
+                    new Chart(ctx, {
+                        type: chart.data.labels.length > 4 ? 'bar' : 'pie',
+                        data: {
+                            labels: chart.data.labels,
+                            datasets: [{
+                                label: chart.data.labels.length > 4 ? '人数' : '',
+                                data: Object.values(chart.data.count),
+                                backgroundColor: chart.data.labels.length > 4 ? '#36A2EB' : ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']
+                            }]
+                        },
+                        options: {
+                            plugins: { title: { display: true, text: chart.title } },
+                            scales: chart.data.labels.length > 4 ? { y: { beginAtZero: true } } : {}
+                        }
+                    });
+                });
+            } catch (error) {
+                console.error("分析错误:", error);
+                resultsDiv.innerHTML = `<p>分析失败: ${error.message}<br>请联系我！</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
